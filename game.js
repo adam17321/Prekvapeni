@@ -208,10 +208,10 @@ function renderPacking() {
       <div class="packing-list" aria-label="Co si zabalit">
         <div class="packing-item"><span class="packing-icon" aria-hidden="true">♨</span><span><strong>Plavky</strong><small>Wellness volá.</small></span></div>
         <div class="packing-item"><span class="packing-icon" aria-hidden="true">♡</span><span><strong>Spodní prádlo na dva dny</strong><small>Pro jistotu celé balení.</small></span></div>
-        <div class="packing-item playful-item"><span class="packing-icon" aria-hidden="true">✦</span><span><strong>Pěkné prádlo navíc</strong><small>Na večer. 😉</small></span></div>
         <div class="packing-item"><span class="packing-icon" aria-hidden="true">⌁</span><span><strong>Podzimní fitík</strong><small>Na naši podzimní procházku.</small></span></div>
         <div class="packing-item"><span class="packing-icon" aria-hidden="true">✧</span><span><strong>Pěkný outfit na večeři</strong><small>Kdybychom někam vyrazili.</small></span></div>
         <div class="packing-item"><span class="packing-icon" aria-hidden="true">♢</span><span><strong>Podpatky</strong><small>Jestli budeš mít chuť.</small></span></div>
+        <div class="packing-item playful-item"><span class="packing-icon" aria-hidden="true">✧</span><span><strong>Pěkné prádlo navíc</strong><small>Na večer.</small></span></div>
       </div>
       <div class="cosmetics-note"><span aria-hidden="true">✦</span><span>Kosmetiku můžeš nechat doma — základní věci budou čekat na hotelu.</span></div>
       <div class="pickup-note"><span class="pickup-icon" aria-hidden="true">↗</span><p>Po práci tě vyzvednu. Během dne ti dám vědět, kdy přesně. Zatím nevyzvídej. 😇</p></div>

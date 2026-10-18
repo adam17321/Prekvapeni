@@ -403,6 +403,11 @@ h1 em { background: linear-gradient(110deg, #284953, #528477 78%); background-cl
 .packing-icon { width: 34px; height: 34px; flex-basis: 34px; background: linear-gradient(145deg, #e1f0e9, #eaf1f3); font-size: 16px; }
 .packing-item strong { font-size: 11px; }
 .packing-item small { font-size: 9px; }
+.playful-item { position: relative; background: linear-gradient(110deg, #fffaf5, #fff4eb); border-color: #eddbcd; box-shadow: inset 3px 0 #ce805d, 0 4px 12px rgba(37,61,62,.035); }
+.playful-item:hover { border-color: #d7a183; box-shadow: inset 3px 0 #ce805d, 0 9px 19px rgba(37,61,62,.08); }
+.playful-item .packing-icon { color: #a95839; background: linear-gradient(145deg, #f4dece, #f7ebde); }
+.playful-item strong { color: #563c32; }
+.playful-item small { color: #94644d; }
 .cosmetics-note, .pickup-note { display: flex; gap: 10px; align-items: center; margin: 0 0 9px; padding: 11px 12px; color: #59686a; background: #eaf2ee; border: 1px solid #e0ebe5; border-radius: 14px; font-size: 10px; line-height: 1.55; }
 .cosmetics-note > span:first-child { color: #558676; font-size: 15px; }
 .pickup-note { background: #fff1e9; border-color: #f5e1d4; }
@@ -454,6 +459,7 @@ h1 em { background: linear-gradient(110deg, #284953, #528477 78%); background-cl
 @media (min-width: 420px) {
   .packing-list { grid-template-columns: repeat(2, minmax(0,1fr)); }
   .packing-item:last-child { grid-column: span 2; }
+  .packing-item.playful-item { grid-column: span 2; }
   .trip-pass { width: auto; min-height: 215px; margin-right: 0; }
 }
 
