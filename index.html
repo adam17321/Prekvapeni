@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f2f5f3">
+    <meta name="description" content="Narozeninová hra plná indicií a brněnského dobrodružství.">
+    <title>Kája · narozeninová mise</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="game.js" defer></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="#top" aria-label="Začátek narozeninové mise">
+          <span class="brand-mark" aria-hidden="true">✳</span>
+          <span>tajný narozeninový plán</span>
+        </a>
+        <span class="topbar-tag"><span class="live-dot" aria-hidden="true"></span> jen pro oslavenkyni</span>
+      </header>
+
+      <main id="top">
+        <section class="hero" aria-labelledby="page-title">
+          <div class="hero-copy">
+            <p class="eyebrow"><span class="eyebrow-line"></span> narozeninová mise · úroveň 20</p>
+            <h1 id="page-title">Operace:<br><em>dvacítka.</em></h1>
+            <p class="hero-lede">Pár indicií, dobré jídlo a výlet, který si poskládáme podle nálady. První úkol už čeká.</p>
+            <div class="hero-signoff"><span aria-hidden="true">↗</span> Připraveno ke spuštění. Otevři první misi níže.</div>
+          </div>
+          <aside class="trip-pass" aria-label="Narozeninová jízdenka">
+            <div class="pass-header"><span>JÍZDENKA · 001</span><span aria-hidden="true">↗</span></div>
+            <div class="route-map" aria-hidden="true"><span class="route-line"></span><span class="route-dot route-start">?</span><span class="route-dot route-end">20</span><span class="route-star">✳</span></div>
+            <p class="pass-label">CÍL CESTY</p>
+            <p class="pass-destination">UTAJEN<br><span>do první správné odpovědi</span></p>
+            <div class="pass-footer"><span>VÝLET · 2 DNY</span><span>NÁSTUP POVOLEN</span></div>
+          </aside>
+        </section>
+
+        <section class="game-layout" aria-label="Narozeninová mise">
+          <aside class="journey-panel" aria-label="Postup a získané body">
+            <div class="panel-heading"><span class="micro-label">TVŮJ PLÁN</span><span class="score" id="score">0 <small>bodů</small></span></div>
+            <div class="score-track" aria-hidden="true"><span id="score-fill"></span></div>
+            <p class="panel-caption" id="panel-caption">Body získáš za správné odpovědi. Večerní hodnocení přidá bonus.</p>
+            <ol class="journey-steps" id="journey-steps" aria-label="Části plánu">
+              <li class="journey-step is-current" data-step="0"><span class="step-num">01</span><span class="step-name">Příprava</span><span class="step-mark" aria-hidden="true">→</span></li>
+              <li class="journey-step" data-step="1"><span class="step-num">02</span><span class="step-name">První večer</span><span class="step-mark" aria-hidden="true">✦</span></li>
+              <li class="journey-step" data-step="2"><span class="step-num">03</span><span class="step-name">10. listopadu</span><span class="step-mark" aria-hidden="true">✦</span></li>
+              <li class="journey-step" data-step="3"><span class="step-num">04</span><span class="step-name">Den odjezdu</span><span class="step-mark" aria-hidden="true">✦</span></li>
+            </ol>
+            <div class="stamp"><span class="stamp-star" aria-hidden="true">✳</span><span>ÚROVEŇ<br><strong>20 / 20</strong></span></div>
+            <button class="reset-link" id="reset-button" type="button">Začít znovu</button>
+          </aside>
+
+          <div class="game-main">
+            <section class="game-card" id="game-card" aria-label="Aktuální úkol">
+              <div class="card-accent" aria-hidden="true"></div>
+              <div class="card-topline"><span id="card-kicker">NAROZENINOVÝ SPIS · OTEVŘÍT</span><span class="card-symbol" aria-hidden="true">✦</span></div>
+              <div class="screen" id="screen" aria-live="polite" aria-atomic="true"></div>
+              <div class="card-foot"><span>NAROZENINOVÝ PLÁN</span><span aria-hidden="true">✳</span><span>POKRAČUJ DÁL</span></div>
+            </section>
+            <p class="soft-note"><span aria-hidden="true">✳</span> Nápověda je povolená. Googlení se toleruje. Spěchání ne.</p>
+          </div>
+        </section>
+
+        <section class="privacy-note" aria-labelledby="privacy-title">
+          <div class="privacy-mark" aria-hidden="true">i</div>
+          <div><h2 id="privacy-title">Poznámka k soukromí</h2><p>Hra běží v prohlížeči a nemá server. Otázky, odpovědi i odhalení jsou uložené ve veřejných souborech stránky a lze je najít ve zdrojovém kódu. Nezadávej sem hesla ani citlivé informace. Osobní nápad na poslední den se nikam neposílá.</p></div>
+        </section>
+      </main>
+
+      <footer class="footer"><span>Výprava právě začíná <span aria-hidden="true">✳</span></span><a href="README.md">Návod pro organizátora</a></footer>
+    </div>
+  </body>
+</html>
