@@ -10,7 +10,40 @@
     <script src="game.js" defer></script>
   </head>
   <body>
-    <div class="page-shell">
+    <section class="access-gate" id="access-gate" aria-labelledby="gate-title">
+      <div class="gate-card">
+        <div class="gate-brand"><span class="brand-mark" aria-hidden="true">✳</span><span>NAROZENINOVÁ MISE · KÁJA</span></div>
+        <p class="gate-eyebrow">PŘÍPRAVA V PLNÉM PROUDU</p>
+        <h1 id="gate-title">Start mise<br><em>se blíží.</em></h1>
+        <p class="gate-copy">Plán se automaticky otevře <strong>8. listopadu 2026 ve 20:00</strong>. Jestli ho chceš otevřít dřív, můžeš zadat předem nastavené heslo.</p>
+
+        <p class="countdown-label">ČAS DO ODEMČENÍ</p>
+        <div class="countdown" aria-label="Odpočet do otevření plánu" aria-live="off">
+          <div class="countdown-unit"><strong id="count-days">--</strong><span>dní</span></div>
+          <div class="countdown-separator" aria-hidden="true">:</div>
+          <div class="countdown-unit"><strong id="count-hours">--</strong><span>hodin</span></div>
+          <div class="countdown-separator" aria-hidden="true">:</div>
+          <div class="countdown-unit"><strong id="count-minutes">--</strong><span>minut</span></div>
+          <div class="countdown-separator" aria-hidden="true">:</div>
+          <div class="countdown-unit"><strong id="count-seconds">--</strong><span>sekund</span></div>
+        </div>
+
+        <form class="gate-form" id="early-access-form">
+          <label for="early-access-password">Předčasný vstup</label>
+          <div class="gate-input-row">
+            <input id="early-access-password" type="password" autocomplete="current-password" placeholder="Zadej heslo">
+            <button class="gate-button" type="submit">Otevřít <span aria-hidden="true">↗</span></button>
+          </div>
+          <p class="gate-feedback" id="gate-feedback" role="status" aria-live="polite"></p>
+        </form>
+
+        <div class="gate-notice"><span aria-hidden="true">i</span><p>Stránka je veřejná. Odpočet a heslo jsou jen jednoduchá zábrana — obsah i heslo lze najít ve zdrojovém kódu a odpočet obejít změnou hodin zařízení. Do hesla nedávej nic, co používáš jinde.</p></div>
+      </div>
+      <div class="gate-orbit gate-orbit-one" aria-hidden="true"></div>
+      <div class="gate-orbit gate-orbit-two" aria-hidden="true"></div>
+    </section>
+
+    <div class="page-shell" id="game-content" hidden>
       <header class="topbar">
         <a class="brand" href="#top" aria-label="Začátek narozeninové mise">
           <span class="brand-mark" aria-hidden="true">✳</span>

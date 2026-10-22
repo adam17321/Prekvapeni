@@ -3,6 +3,10 @@
  * Všechno v JavaScriptu je viditelné ve zdrojovém kódu veřejné stránky.
  */
 const EVENT_DATE = '10. 11.';
+// Datum používá pražské pásmo UTC+1. Heslo vyplň před publikováním; bude viditelné ve zdrojovém kódu.
+const ACCESS_UNLOCK_AT = new Date('2026-11-08T20:00:00+01:00');
+const EARLY_ACCESS_PASSWORD = 'Narozeniny_123';
+const ACCESS_STORAGE_KEY = 'kajaNarozeninyAccess-v1';
 const STORAGE_KEY = 'kajaNarozeninyProgress-v4';
 const MAX_SCORE = 5; // Čtyři správné odpovědi + bonus za večerní check-in
 
@@ -204,7 +208,7 @@ function renderPacking() {
     <div class="screen-content packing-screen">
       <p class="screen-eyebrow">Důležitá příprava</p>
       <h2>Než vyrazíme…</h2>
-      <p class="screen-copy">Zabal si pár věcí na malý výlet. Zbytek nech na mně.</p>
+      <p class="screen-copy">Zabal si pár věcí na malý výlet. Vím, že máš ráda, když se spolu hezky oblékneme, tak si přibal i něco pěkného na sebe.</p>
       <div class="packing-list" aria-label="Co si zabalit">
         <div class="packing-item"><span class="packing-icon" aria-hidden="true">♨</span><span><strong>Plavky</strong><small>Wellness volá.</small></span></div>
         <div class="packing-item"><span class="packing-icon" aria-hidden="true">♡</span><span><strong>Spodní prádlo na dva dny</strong><small>Pro jistotu celé balení.</small></span></div>
@@ -606,5 +610,61 @@ function resetGame() {
   document.querySelector('#game-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-resetButton.addEventListener('click', resetGame);
-render();
+const accessGate = document.querySelector('#access-gate');
+const gameContent = document.querySelector('#game-content');
+const earlyAccessForm = document.querySelector('#early-access-form');
+const earlyAccessInput = document.querySelector('#early-access-password');
+const gateFeedback = document.querySelector('#gate-feedback');
+let countdownInterval;
+
+function showGame() {
+  accessGate.hidden = true;
+  gameContent.hidden = false;
+  window.clearInterval(countdownInterval);
+  try { localStorage.setItem(ACCESS_STORAGE_KEY, 'unlocked'); } catch { /* Stránka funguje i bez úložiště. */ }
+  resetButton.addEventListener('click', resetGame);
+  render();
+}
+
+function updateCountdown() {
+  const remaining = ACCESS_UNLOCK_AT.getTime() - Date.now();
+  if (remaining <= 0) {
+    showGame();
+    return;
+  }
+
+  const totalSeconds = Math.floor(remaining / 1000);
+  document.querySelector('#count-days').textContent = String(Math.floor(totalSeconds / 86400)).padStart(2, '0');
+  document.querySelector('#count-hours').textContent = String(Math.floor((totalSeconds % 86400) / 3600)).padStart(2, '0');
+  document.querySelector('#count-minutes').textContent = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+  document.querySelector('#count-seconds').textContent = String(totalSeconds % 60).padStart(2, '0');
+}
+
+function initializeAccessGate() {
+  let alreadyUnlocked = false;
+  try { alreadyUnlocked = localStorage.getItem(ACCESS_STORAGE_KEY) === 'unlocked'; } catch { /* Pokračuj bez úložiště. */ }
+  if (alreadyUnlocked || Date.now() >= ACCESS_UNLOCK_AT.getTime()) {
+    showGame();
+    return;
+  }
+
+  earlyAccessForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    if (!EARLY_ACCESS_PASSWORD) {
+      gateFeedback.textContent = 'Předčasný vstup ještě není nastavený. V souboru game.js doplň heslo do EARLY_ACCESS_PASSWORD.';
+      return;
+    }
+    if (earlyAccessInput.value !== EARLY_ACCESS_PASSWORD) {
+      gateFeedback.textContent = 'Tohle heslo nesedí. Zkus to ještě jednou.';
+      earlyAccessInput.select();
+      return;
+    }
+    gateFeedback.textContent = '';
+    showGame();
+  });
+
+  updateCountdown();
+  countdownInterval = window.setInterval(updateCountdown, 1000);
+}
+
+initializeAccessGate();

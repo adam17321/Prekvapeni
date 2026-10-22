@@ -2,6 +2,14 @@
 
 Hravá narozeninová stránka v češtině, připravená pro telefon a GitHub Pages. Používá jen HTML, CSS a JavaScript — bez serveru a bez build kroku.
 
+## Odpočet a předčasný vstup
+
+Předstartovní obrazovka odpočítává do **8. 11. 2026 ve 20:00 pražského času** a poté automaticky otevře hru. Čas je nastaven v `game.js` v proměnné `ACCESS_UNLOCK_AT`. Odpočet běží na zařízení návštěvníka; GitHub Pages k tomu nepotřebuje server.
+
+Pokud chceš hru otevřít dřív, nastav v `game.js` hodnotu `EARLY_ACCESS_PASSWORD` místo prázdného řetězce, například `const EARLY_ACCESS_PASSWORD = 'sem-si-zvol-heslo';`. Heslo rozlišuje malá a velká písmena. Dokud zůstane prázdné, předčasný vstup není dostupný.
+
+**Důležité:** toto není skutečné zabezpečení. Na veřejném GitHub Pages je heslo uložené v JavaScriptu a kdokoli může zobrazit zdrojové soubory; návštěvník může také změnit hodiny zařízení. Použij jen heslo, které nepoužíváš jinde, a nespoléhej na zámek kvůli utajení obsahu. Skutečné ověřování by vyžadovalo službu s přihlášením nebo server.
+
 ## Jak hra postupuje
 
 1. Úvod řekne, co si zabalit, kdy ji vyzvedneš a že čas upřesníš během dne.
@@ -31,7 +39,7 @@ Postup, body a vybrané možnosti se ukládají jen v místním úložišti dan�
 
 ## Soukromí
 
-GitHub Pages zveřejní stránku. Všechno vložené do HTML, CSS nebo JavaScriptu — včetně otázek, odpovědí, názvů hotelu, restaurace a dalších odhalení — může kdokoli s odkazem najít také ve zdrojových souborech. Zamčená obrazovka ani veřejný odkaz nejsou ochranou před prozrazením. Nevkládej sem hesla, čísla rezervací, přesnou adresu pokoje ani jiné citlivé informace.
+GitHub Pages zveřejní stránku. Všechno vložené do HTML, CSS nebo JavaScriptu — včetně otázek, odpovědí, názvů hotelu, restaurace, předčasného vstupního hesla a dalších odhalení — může kdokoli s odkazem najít také ve zdrojových souborech. Odpočet se řídí hodinami zařízení návštěvníka. Zamčená obrazovka ani veřejný odkaz nejsou ochranou před prozrazením. Nevkládej sem hesla používaná jinde, čísla rezervací, přesnou adresu pokoje ani jiné citlivé informace.
 
 Hra nemá backend ani analytiku. Jediný odkaz ven vede na web restaurace FLANK. Odpovědi, hodnocení a její nápady se nikam neposílají.
 
@@ -43,6 +51,8 @@ Hra nemá backend ani analytiku. Jediný odkaz ven vede na web restaurace FLANK.
 4. V části **Build and deployment** vyber **Deploy from a branch**.
 5. Jako zdroj zvol větev `main` a složku `/(root)`, potom klikni na **Save**.
 6. Po zveřejnění najdeš adresu stránky v nastavení Pages. Zkontroluj ji v telefonu předtím, než ji pošleš Káje.
+
+Po nahrání upravených souborů do stejného GitHub repozitáře se stránka znovu publikuje jako běžný statický web. Nepotřebuješ zapnout backend ani sestavení projektu.
 
 GitHub Pages z této složky publikuje statické soubory přímo. Podrobnosti najdeš v [oficiálním návodu k vytvoření webu GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site) a v [návodu k výběru zdroje publikování](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site).
 
