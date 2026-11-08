@@ -3,12 +3,20 @@
  * Všechno v JavaScriptu je viditelné ve zdrojovém kódu veřejné stránky.
  */
 const EVENT_DATE = '10. 11.';
-// Datum používá pražské pásmo UTC+1. Heslo vyplň před publikováním; bude viditelné ve zdrojovém kódu.
+// Datum používá pražské pásmo UTC+1. Předčasné heslo je jen jednoduchá zábrana a je viditelné ve zdrojovém kódu.
 const ACCESS_UNLOCK_AT = new Date('2026-11-08T20:00:00+01:00');
 const EARLY_ACCESS_PASSWORD = 'Narozeniny_123';
 const ACCESS_STORAGE_KEY = 'kajaNarozeninyAccess-v1';
 const STORAGE_KEY = 'kajaNarozeninyProgress-v4';
-const MAX_SCORE = 5; // Čtyři správné odpovědi + bonus za večerní check-in
+const ABOUT_ME_QUIZ = [
+  { question: 'Jaké je moje vysněné auto?', answers: ['McLaren 720S', 'McLaren 720 s'], hint: 'Je to britský supersport. Číslo v názvu je 720.' },
+  { question: 'Jaké jídlo mám nejradši?', answers: ['steak'], hint: 'Jde o maso, které se obvykle připravuje jako jeden kus.' },
+  { question: 'Jakou velikost kol má moje auto?', answers: ['17', '17 palců', 'sedmnáct', 'sedmnáct palců'], hint: 'Velikost se uvádí v palcích; je to liché číslo.' },
+  { question: 'Kam bych se chtěl jednou podívat?', answers: ['Dubai', 'Dubaj'], hint: 'Je to město ve Spojených arabských emirátech.' },
+  { question: 'A kde jsem nejradši?', answers: ['ve mně', 've mne'], hint: 'Není to místo na mapě. Odpověď začíná „ve m…“.' },
+];
+const BASE_GAME_SCORE = 5; // Čtyři správné odpovědi + bonus za večerní check-in
+const MAX_SCORE = BASE_GAME_SCORE + ABOUT_ME_QUIZ.length;
 
 const VALID_SCREENS = [
   'packing', 'brnoQuiz', 'destinationReveal', 'driveChoice', 'eveningPlan',
@@ -25,6 +33,9 @@ function freshState() {
     driveChoice: '',
     dinnerChoice: '',
     afternoonChoice: '',
+    aboutMeIndex: 0,
+    aboutMeAttempts: 0,
+    aboutMePoints: 0,
   };
 }
 
@@ -41,6 +52,9 @@ function loadState() {
       driveChoice: ['me', 'you', 'later'].includes(saved.driveChoice) ? saved.driveChoice : '',
       dinnerChoice: ['flank', 'order'].includes(saved.dinnerChoice) ? saved.dinnerChoice : '',
       afternoonChoice: ['prehrada', 'odpocinek', 'bolt'].includes(saved.afternoonChoice) ? saved.afternoonChoice : '',
+      aboutMeIndex: Math.max(0, Math.min(ABOUT_ME_QUIZ.length, Number(saved.aboutMeIndex) || 0)),
+      aboutMeAttempts: Math.max(0, Math.min(3, Number(saved.aboutMeAttempts) || 0)),
+      aboutMePoints: Math.max(0, Math.min(ABOUT_ME_QUIZ.length, Number(saved.aboutMePoints) || 0)),
     };
   } catch {
     return freshState();
@@ -69,6 +83,9 @@ function saveState() {
       driveChoice: state.driveChoice,
       dinnerChoice: state.dinnerChoice,
       afternoonChoice: state.afternoonChoice,
+      aboutMeIndex: state.aboutMeIndex,
+      aboutMeAttempts: state.aboutMeAttempts,
+      aboutMePoints: state.aboutMePoints,
     }));
   } catch { /* Stránka jde hrát i bez lokálního ukládání. */ }
 }
@@ -102,7 +119,7 @@ function renderProgress() {
   scoreFill.style.width = `${(state.score / MAX_SCORE) * 100}%`;
   panelCaption.textContent = state.score === MAX_SCORE
     ? 'Plný počet! Teď už jen užívat narozeninový výlet.'
-    : 'Za čtyři správné odpovědi a večerní check-in můžeš nasbírat až pět bodů.';
+    : `Za předstartovní kvíz, správné odpovědi a večerní check-in můžeš nasbírat až ${MAX_SCORE} bodů.`;
 
   stepItems.forEach((item, index) => {
     const isCurrent = index === phase;
@@ -601,8 +618,13 @@ function render() {
 }
 
 function resetGame() {
-  if (!window.confirm('Vrátit narozeninovou hru úplně na začátek? Smažou se body a postup v tomto prohlížeči.')) return;
+  if (!window.confirm('Vrátit narozeninovou hru na začátek? Smaže se herní postup, body z předstartovního kvízu zůstanou.')) return;
+  const aboutMeIndex = Math.min(state.aboutMeIndex, ABOUT_ME_QUIZ.length);
+  const aboutMePoints = Math.min(state.aboutMePoints, ABOUT_ME_QUIZ.length);
   state = freshState();
+  state.aboutMeIndex = aboutMeIndex;
+  state.aboutMePoints = aboutMePoints;
+  state.score = aboutMePoints;
   selectedRating = 0;
   dayIdea = '';
   saveState();
@@ -612,24 +634,111 @@ function resetGame() {
 
 const accessGate = document.querySelector('#access-gate');
 const gameContent = document.querySelector('#game-content');
+const aboutMeQuizPage = document.querySelector('#about-me-quiz');
 const earlyAccessForm = document.querySelector('#early-access-form');
 const earlyAccessInput = document.querySelector('#early-access-password');
 const gateFeedback = document.querySelector('#gate-feedback');
+const aboutMeTitle = document.querySelector('#about-me-title');
+const aboutMeKicker = document.querySelector('#about-me-kicker');
+const aboutMeCount = document.querySelector('#about-me-count');
+const aboutMeProgressFill = document.querySelector('#about-me-progress-fill');
+const aboutMeQuestion = document.querySelector('#about-me-question');
+const aboutMeHintButton = document.querySelector('#about-me-hint-button');
+const aboutMeHint = document.querySelector('#about-me-hint');
+const aboutMeForm = document.querySelector('#about-me-form');
+const aboutMeInput = document.querySelector('#about-me-answer');
+const aboutMeSubmitButton = aboutMeForm.querySelector('button[type="submit"]');
+const aboutMeContinueButton = document.querySelector('#about-me-continue');
+const aboutMeFeedback = document.querySelector('#about-me-feedback');
 let countdownInterval;
 
-function showGame() {
+function enterGame() {
   accessGate.hidden = true;
+  aboutMeQuizPage.hidden = true;
   gameContent.hidden = false;
-  window.clearInterval(countdownInterval);
-  try { localStorage.setItem(ACCESS_STORAGE_KEY, 'unlocked'); } catch { /* Stránka funguje i bez úložiště. */ }
   resetButton.addEventListener('click', resetGame);
   render();
+}
+
+function renderAboutMeQuiz() {
+  accessGate.hidden = true;
+  gameContent.hidden = true;
+  aboutMeQuizPage.hidden = false;
+
+  if (!ABOUT_ME_QUIZ.length) {
+    aboutMeKicker.textContent = 'JEŠTĚ SE PŘIPRAVUJE';
+    aboutMeTitle.innerHTML = 'Kvíz o mně<br><em>se chystá.</em>';
+    aboutMeCount.textContent = '';
+    aboutMeProgressFill.style.width = '0%';
+    aboutMeQuestion.textContent = 'Před spuštěním doplň otázky a správné odpovědi do pole ABOUT_ME_QUIZ v souboru game.js.';
+    aboutMeHintButton.hidden = true;
+    aboutMeHint.hidden = true;
+    aboutMeForm.hidden = true;
+    return;
+  }
+
+  const progress = Math.min(state.aboutMeIndex, ABOUT_ME_QUIZ.length);
+  aboutMeProgressFill.style.width = `${(progress / ABOUT_ME_QUIZ.length) * 100}%`;
+  aboutMeForm.hidden = progress >= ABOUT_ME_QUIZ.length;
+  aboutMeFeedback.textContent = '';
+  aboutMeFeedback.classList.remove('is-answer-reveal');
+
+  if (progress >= ABOUT_ME_QUIZ.length) {
+    aboutMeHintButton.hidden = true;
+    aboutMeHint.hidden = true;
+    aboutMeKicker.textContent = 'KVÍZ SPLNĚN · BODOVÝ ZISK ULOŽEN';
+    aboutMeTitle.innerHTML = 'Dobrá práce.<br><em>Mise čeká.</em>';
+    aboutMeCount.textContent = `Kvíz dokončen · ${state.aboutMePoints} z ${ABOUT_ME_QUIZ.length} bodů`;
+    aboutMeQuestion.textContent = 'Všechno odemčeno. Můžeš se pustit do narozeninového plánu.';
+    const startButton = document.createElement('button');
+    startButton.className = 'gate-button about-quiz-start';
+    startButton.type = 'button';
+    startButton.textContent = 'Vstoupit do hry';
+    startButton.addEventListener('click', enterGame);
+    aboutMeQuestion.append(startButton);
+    return;
+  }
+
+  const currentQuestion = ABOUT_ME_QUIZ[progress];
+  aboutMeKicker.textContent = 'ODPOČET SKONČIL · ODEMČI DALŠÍ KROK';
+  aboutMeTitle.innerHTML = 'Jak dobře<br><em>mě znáš?</em>';
+  aboutMeCount.textContent = `Otázka ${progress + 1} z ${ABOUT_ME_QUIZ.length} · +1 bod`;
+  aboutMeQuestion.textContent = currentQuestion.question;
+  aboutMeHintButton.hidden = !currentQuestion.hint;
+  aboutMeHintButton.textContent = 'Zobrazit nápovědu';
+  aboutMeHintButton.setAttribute('aria-expanded', 'false');
+  aboutMeHint.textContent = currentQuestion.hint || '';
+  aboutMeHint.hidden = true;
+  aboutMeInput.value = '';
+  aboutMeInput.disabled = state.aboutMeAttempts >= 3;
+  aboutMeSubmitButton.hidden = state.aboutMeAttempts >= 3;
+  aboutMeContinueButton.hidden = state.aboutMeAttempts < 3;
+  if (state.aboutMeAttempts >= 3) {
+    const answers = Array.isArray(currentQuestion.answers) ? currentQuestion.answers : [currentQuestion.answer];
+    const correctAnswer = answers.find((answer) => typeof answer === 'string') || '—';
+    aboutMeFeedback.textContent = `Správná odpověď: ${correctAnswer}. Pokračuj bez bodu.`;
+    aboutMeFeedback.classList.add('is-answer-reveal');
+  } else {
+    if (state.aboutMeAttempts) {
+      const remaining = 3 - state.aboutMeAttempts;
+      aboutMeFeedback.textContent = `To ještě nesedí. Zbývá ${remaining} ${remaining === 1 ? 'pokus' : 'pokusy'}. Zkus nápovědu.`;
+    } else {
+      aboutMeFeedback.textContent = '';
+    }
+    aboutMeInput.focus({ preventScroll: true });
+  }
+}
+
+function startAboutMeQuiz() {
+  window.clearInterval(countdownInterval);
+  try { localStorage.setItem(ACCESS_STORAGE_KEY, 'unlocked'); } catch { /* Stránka funguje i bez úložiště. */ }
+  renderAboutMeQuiz();
 }
 
 function updateCountdown() {
   const remaining = ACCESS_UNLOCK_AT.getTime() - Date.now();
   if (remaining <= 0) {
-    showGame();
+    startAboutMeQuiz();
     return;
   }
 
@@ -640,11 +749,65 @@ function updateCountdown() {
   document.querySelector('#count-seconds').textContent = String(totalSeconds % 60).padStart(2, '0');
 }
 
+aboutMeForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const question = ABOUT_ME_QUIZ[state.aboutMeIndex];
+  if (!question || state.aboutMeAttempts >= 3) return;
+
+  const acceptedAnswers = Array.isArray(question.answers) ? question.answers : [question.answer];
+  const givenAnswer = normalize(aboutMeInput.value);
+  const correct = Boolean(givenAnswer) && acceptedAnswers.some((answer) => typeof answer === 'string' && normalize(answer) === givenAnswer);
+  if (!correct) {
+    state.aboutMeAttempts += 1;
+    saveState();
+    if (state.aboutMeAttempts >= 3) {
+      const correctAnswer = acceptedAnswers.find((answer) => typeof answer === 'string') || '—';
+      aboutMeFeedback.textContent = `Správná odpověď: ${correctAnswer}. Pokračuj bez bodu.`;
+      aboutMeFeedback.classList.add('is-answer-reveal');
+      aboutMeInput.disabled = true;
+      aboutMeSubmitButton.hidden = true;
+      aboutMeContinueButton.hidden = false;
+    } else {
+      const remaining = 3 - state.aboutMeAttempts;
+      aboutMeFeedback.textContent = `To ještě nesedí. Zbývají ${remaining} ${remaining === 1 ? 'pokus' : 'pokusy'}. Zkus nápovědu.`;
+      aboutMeInput.select();
+    }
+    return;
+  }
+
+  state.aboutMeIndex += 1;
+  state.aboutMeAttempts = 0;
+  state.aboutMePoints += 1;
+  state.score = Math.min(MAX_SCORE, state.score + 1);
+  saveState();
+  celebrate();
+  renderAboutMeQuiz();
+});
+
+aboutMeHintButton.addEventListener('click', () => {
+  const opening = aboutMeHint.hidden;
+  aboutMeHint.hidden = !opening;
+  aboutMeHintButton.setAttribute('aria-expanded', String(opening));
+  aboutMeHintButton.textContent = opening ? 'Schovat nápovědu' : 'Zobrazit nápovědu';
+});
+
+aboutMeContinueButton.addEventListener('click', () => {
+  if (state.aboutMeAttempts < 3) return;
+  state.aboutMeIndex += 1;
+  state.aboutMeAttempts = 0;
+  saveState();
+  renderAboutMeQuiz();
+});
+
 function initializeAccessGate() {
   let alreadyUnlocked = false;
   try { alreadyUnlocked = localStorage.getItem(ACCESS_STORAGE_KEY) === 'unlocked'; } catch { /* Pokračuj bez úložiště. */ }
+  if (ABOUT_ME_QUIZ.length && state.aboutMeIndex >= ABOUT_ME_QUIZ.length) {
+    enterGame();
+    return;
+  }
   if (alreadyUnlocked || Date.now() >= ACCESS_UNLOCK_AT.getTime()) {
-    showGame();
+    startAboutMeQuiz();
     return;
   }
 
@@ -660,7 +823,7 @@ function initializeAccessGate() {
       return;
     }
     gateFeedback.textContent = '';
-    showGame();
+    startAboutMeQuiz();
   });
 
   updateCountdown();

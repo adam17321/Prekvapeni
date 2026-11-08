@@ -14,10 +14,10 @@
       <div class="gate-card">
         <div class="gate-brand"><span class="brand-mark" aria-hidden="true">✳</span><span>NAROZENINOVÁ MISE · KÁJA</span></div>
         <p class="gate-eyebrow">PŘÍPRAVA V PLNÉM PROUDU</p>
-        <h1 id="gate-title">Start narozenin<br><em>se blíží.</em></h1>
-        <p class="gate-copy">Plán se automaticky otevře <strong>8. listopadu 2026 ve 20:00</strong>. Jestli ho chceš otevřít dřív, můžeš zadat předem nastavené heslo.</p>
+        <h1 id="gate-title">Start mise<br><em>se blíží.</em></h1>
+        <p class="gate-copy">V neděli <strong>8. listopadu 2026 ve 20:00</strong> se otevře krátký kvíz o mně. Po jeho dokončení se zpřístupní narozeninový plán.</p>
 
-        <p class="countdown-label">ČAS DO ODEMČENÍ</p>
+        <p class="countdown-label">ČAS DO KVÍZU</p>
         <div class="countdown" aria-label="Odpočet do otevření plánu" aria-live="off">
           <div class="countdown-unit"><strong id="count-days">--</strong><span>dní</span></div>
           <div class="countdown-separator" aria-hidden="true">:</div>
@@ -38,6 +38,32 @@
         </form>
 
         <div class="gate-notice"><span aria-hidden="true">i</span><p>Stránka je veřejná. Odpočet a heslo jsou jen jednoduchá zábrana — obsah i heslo lze najít ve zdrojovém kódu a odpočet obejít změnou hodin zařízení. Do hesla nedávej nic, co používáš jinde.</p></div>
+      </div>
+      <div class="gate-orbit gate-orbit-one" aria-hidden="true"></div>
+      <div class="gate-orbit gate-orbit-two" aria-hidden="true"></div>
+    </section>
+
+    <section class="about-me-quiz" id="about-me-quiz" aria-labelledby="about-me-title" hidden>
+      <div class="about-quiz-card">
+        <div class="gate-brand"><span class="brand-mark" aria-hidden="true">✳</span><span>PŘÍPRAVNÝ KVÍZ</span></div>
+        <p class="gate-eyebrow" id="about-me-kicker">ODPOČET SKONČIL · ODEMČI DALŠÍ KROK</p>
+        <h1 id="about-me-title">Jak dobře<br><em>mě znáš?</em></h1>
+        <p class="gate-copy">Než začne narozeninová mise, čeká tě pár otázek o mně.</p>
+        <div class="about-quiz-progress" aria-label="Postup kvízem"><span id="about-me-progress-fill"></span></div>
+        <p class="about-quiz-count" id="about-me-count" aria-live="polite"></p>
+        <div id="about-me-question" class="about-quiz-question"></div>
+        <button class="about-quiz-hint" id="about-me-hint-button" type="button" aria-expanded="false">Zobrazit nápovědu</button>
+        <p class="about-quiz-hint-text" id="about-me-hint" hidden></p>
+        <form class="about-quiz-form" id="about-me-form">
+          <label for="about-me-answer">Tvoje odpověď</label>
+          <div class="gate-input-row">
+            <input id="about-me-answer" type="text" autocomplete="off" placeholder="Napiš odpověď">
+            <button class="gate-button" type="submit">Odpovědět <span aria-hidden="true">↗</span></button>
+          </div>
+          <p class="gate-feedback" id="about-me-feedback" role="status" aria-live="polite"></p>
+          <button class="gate-button about-quiz-continue" id="about-me-continue" type="button" hidden>Pokračovat <span aria-hidden="true">↗</span></button>
+        </form>
+        <p class="about-quiz-footnote">Každá správná odpověď přidá bod. Otázky i odpovědi se upravují v souboru game.js.</p>
       </div>
       <div class="gate-orbit gate-orbit-one" aria-hidden="true"></div>
       <div class="gate-orbit gate-orbit-two" aria-hidden="true"></div>

@@ -6,9 +6,11 @@ Hravá narozeninová stránka v češtině, připravená pro telefon a GitHub Pa
 
 Předstartovní obrazovka odpočítává do **8. 11. 2026 ve 20:00 pražského času** a poté automaticky otevře hru. Čas je nastaven v `game.js` v proměnné `ACCESS_UNLOCK_AT`. Odpočet běží na zařízení návštěvníka; GitHub Pages k tomu nepotřebuje server.
 
-Pokud chceš hru otevřít dřív, nastav v `game.js` hodnotu `EARLY_ACCESS_PASSWORD` místo prázdného řetězce, například `const EARLY_ACCESS_PASSWORD = 'sem-si-zvol-heslo';`. Heslo rozlišuje malá a velká písmena. Dokud zůstane prázdné, předčasný vstup není dostupný.
+Předčasný vstupní kód se nastavuje v `game.js` v hodnotě `EARLY_ACCESS_PASSWORD`; můžeš ho tam kdykoli změnit. Heslo rozlišuje malá a velká písmena. Když zůstane prázdné, předčasný vstup není dostupný.
 
 **Důležité:** toto není skutečné zabezpečení. Na veřejném GitHub Pages je heslo uložené v JavaScriptu a kdokoli může zobrazit zdrojové soubory; návštěvník může také změnit hodiny zařízení. Použij jen heslo, které nepoužíváš jinde, a nespoléhej na zámek kvůli utajení obsahu. Skutečné ověřování by vyžadovalo službu s přihlášením nebo server.
+
+Po odpočtu se otevře povinný osobní kvíz. Každá otázka má vlastní nápovědu; po třech chybných odpovědích se zobrazí správná odpověď a lze pokračovat bez bodu. Za správnou odpověď získá bod. Do hlavního plánu se pokračuje po projití všech otázek. Postup kvízem se uloží v místním prohlížeči, ale její konkrétní textové odpovědi se neukládají. Kvíz funguje i při předčasném otevření heslem.
 
 ## Jak hra postupuje
 
@@ -19,13 +21,14 @@ Pokud chceš hru otevřít dřív, nastav v `game.js` hodnotu `EARLY_ACCESS_PASS
 5. Další otázka odhalí pizzu k obědu. Pak může uhodnout přezdívku brněnské přehrady a vybrat si odpolední plán včetně možnosti chvíli rozvážet Bolt Food.
 6. Večer počítá se sushi a wellness. Po stisku **Zobrazit program dne odjezdu** se samostatně otevře poslední den: snídaně, volitelné Form Factory, procházka nebo její vlastní nápad.
 
-Za čtyři správné odpovědi získá po bodu a večerní hodnocení prvního dne přidá bonus. Dohromady může získat **5 bodů**. Její vlastní nápad na poslední den zůstane jen v aktuální kartě prohlížeče a nikam se neposílá.
+Za každou správnou odpověď v osobním kvízu získá bod. Ve hře jsou další čtyři bodované otázky a bonus za večerní check-in. Celkové maximum se automaticky nastaví podle počtu osobních otázek plus pěti herních bodů. Její vlastní nápad na poslední den zůstane jen v aktuální kartě prohlížeče a nikam se neposílá.
 
 ## Co upravit před zveřejněním
 
 Otevři `game.js` v textovém editoru:
 
 - `EVENT_DATE` nahoře nastavuje datum druhého dne. Výchozí hodnota je `10. 11.`; datum se použije v postupu, programu i kalendářní kartě.
+- Osobní otázky, přijímané odpovědi a nápovědy jsou v poli `ABOUT_ME_QUIZ` na začátku souboru `game.js`. Použij například `{ question: 'Jak se jmenuje moje oblíbená kavárna?', answers: ['Kavárna X', 'kavárna x'], hint: 'Začíná na K.' }`. Odpovědi se porovnávají bez ohledu na velikost písmen a diakritiku; další přijatelné varianty můžeš přidat do `answers`. Po třech chybách hra správnou odpověď ukáže a dovolí pokračovat bez bodu.
 - Texty a nápovědy upravíš v příslušných funkcích `renderPacking`, `renderBrnoQuiz`, `renderEveningPlan`, `renderDayTwoMorning`, `renderLunchQuiz`, `renderRiverQuiz`, `renderDepartureLock` a `renderDeparturePlan`.
 - Správné odpovědi upravíš v příslušných voláních `bindQuiz(...)`. Hra ignoruje velikost písmen a diakritiku.
 - Nabídku večeře změníš ve `renderEveningPlan`; odpolední možnosti najdeš ve `renderDayTwoEvening`.
@@ -39,7 +42,7 @@ Postup, body a vybrané možnosti se ukládají jen v místním úložišti dan�
 
 ## Soukromí
 
-GitHub Pages zveřejní stránku. Všechno vložené do HTML, CSS nebo JavaScriptu — včetně otázek, odpovědí, názvů hotelu, restaurace, předčasného vstupního hesla a dalších odhalení — může kdokoli s odkazem najít také ve zdrojových souborech. Odpočet se řídí hodinami zařízení návštěvníka. Zamčená obrazovka ani veřejný odkaz nejsou ochranou před prozrazením. Nevkládej sem hesla používaná jinde, čísla rezervací, přesnou adresu pokoje ani jiné citlivé informace.
+GitHub Pages zveřejní stránku. Všechno vložené do HTML, CSS nebo JavaScriptu — včetně osobních otázek, správných odpovědí, názvů hotelu, restaurace, předčasného vstupního hesla a dalších odhalení — může kdokoli s odkazem najít také ve zdrojových souborech. Odpočet se řídí hodinami zařízení návštěvníka. Zamčená obrazovka ani veřejný odkaz nejsou ochranou před prozrazením. Nevkládej sem hesla používaná jinde, čísla rezervací, přesnou adresu pokoje ani jiné citlivé informace.
 
 Hra nemá backend ani analytiku. Jediný odkaz ven vede na web restaurace FLANK. Odpovědi, hodnocení a její nápady se nikam neposílají.
 
